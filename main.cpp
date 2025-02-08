@@ -21,17 +21,18 @@ int keyGen(int id,int tblSize){ //generate a key for a node from its ID
   return id % tblSize;
 }
 
-void addNode(Node* node, Node** hashTable, int key, int* tblSize){ //add a node to the hash table based on its ke\
-y                                                                                                                 
-  if(hashTable[key] == nullptr){
-    hashTable[key] = node;
-  }else if(hashTable[key]->getCollisions() > 2){
-    hashTable = reHash(hashTable,tblSize);
-  }else{
-    hashTable[key]->append(node);
+void printTbl(Node** hashTable, int tblSize){ //print out the chained nodes in each bucket of the table                                     
+  for(int i = 0; i < tblSize; i++){
+    cout << "key/col " << i << " ";
+    if(hashTable[i] != nullptr){
+      hashTable[i]->print();
+      cout << hashTable[i]->getCollisions();
+    }
+    cout << endl;
   }
 }
 
+/*
 Node** reHash(Node** hashTableOld, int* tblSize){
   cout << "NEW TABLE OF DOUBLE SIZE" << endl;
   *tblSize *= 2;
@@ -54,6 +55,55 @@ Node** reHash(Node** hashTableOld, int* tblSize){
     n3->zeroCollisions();
   }
   return hashTableNew;
+  }*/
+
+void addNode(Node* node, Node** hashTable, int key, int* tblSize){ //add a node to the hash table based on its key
+  if(hashTable[key] == nullptr){
+    hashTable[key] = node;
+    cout << "SSETTING " << node->getStudent()->getID() << " AT " << key << " @ " << key << endl;
+  }else if(hashTable[key]->getCollisions() > 2){
+    *tblSize *= 2;
+    cout << "SETTTING TBLSIZE " << *tblSize << endl;
+    Node** hashTableNew = new Node* [*tblSize]{};
+    /* cout << endl;
+    printTbl(hashTable,*tblSize/2);
+    cout << endl;
+    printTbl(hashTableNew,*tblSize);
+    cout << endl;*/
+
+    
+    for(int i = 0; i < *tblSize/2; i++){
+      Node* n1 = hashTable[i];
+      Node* n2 = n1->getNext();
+      Node* n3 = n2->getNext();
+      
+      n1->setNext(nullptr);
+      n2->setNext(nullptr);
+      n3->setNext(nullptr);
+      
+      int k1 = keyGen(n1->getStudent()->getID(),*tblSize);
+      n1->zeroCollisions();
+      addNode(n1,hashTableNew,k1,tblSize);
+
+      int k2 = keyGen(n2->getStudent()->getID(),*tblSize);
+      n2->zeroCollisions();
+      addNode(n2,hashTableNew,k2,tblSize);
+
+      int k3 = keyGen(n3->getStudent()->getID(),*tblSize);
+      n3->zeroCollisions();
+      addNode(n3,hashTableNew,k3,tblSize);
+    }
+    int key = keyGen(node->getStudent()->getID(),*tblSize);
+    addNode(node,hashTableNew,key,tblSize);
+    
+    cout << endl;
+    hashTable = hashTableNew;
+    printTbl(hashTable,*tblSize);
+    cout << endl;
+  }else{
+    hashTable[key]->append(node);
+    cout << "ESETTING " << node->getStudent()->getID() << " AT " << &hashTable[key] << " @ " << key << endl;
+  }
 }
 
 void deleteNode(int id, int tblSize, Node** hashTable){
@@ -80,24 +130,13 @@ void randomAdd(Node** hashTable, int* tblSize, int* randStart, int genSize){ //r
   *randStart += genSize;
 }
 
-void printTbl(Node** hashTable, int tblSize){ //print out the chained nodes in each bucket of the table
-  for(int i = 0; i < tblSize; i++){
-    cout << "key/col " << i << " ";
-    if(hashTable[i] != nullptr){
-      hashTable[i]->print();
-      cout << hashTable[i]->getCollisions();
-    }
-    cout << endl;
-  }
-}
-
 int main(){
   char* input = new char[20];
   bool running = true;
-  int tblSize = 100;
+  int tblSize = 3;
   int intput;
   int randStart = 0; //the random block of students will generate with ids greater than that of any manually generated students to prevent students from generating with the same ids, though this does not prevent conflicting manual student additions
-  Node** hashTable = new Node* [tblSize];
+  Node** hashTable = new Node* [tblSize]{};
   srand(time(NULL));
   
   
@@ -111,7 +150,7 @@ int main(){
 	cout << "What is this student's id number?" << endl;
 	cin >> intput;
 	cin.ignore();
-	if(randStart < intput){
+	if(randStart <= intput){
 	  randStart = intput+1;
 	}
 	manualAdd(new Node(new Student(intput)),hashTable,&tblSize);

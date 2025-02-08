@@ -19,6 +19,7 @@ class Node{
   void depend(int checkID);
   Node* getNext();
   int getCollisions();
+  void zeroCollisions();
  private:
   Student* studentValue;
   Node* next;

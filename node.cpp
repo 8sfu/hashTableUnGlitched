@@ -42,7 +42,7 @@ void Node::append(Node* newNode){
   }
 }
 
-void Node::depend(int checkId){
+void Node::depend(int checkId){ //I don't know why these are getters and setters but it works I suppose.
   if(this->getNext()->getStudent()->getID() == checkId){
     this->setNext(this->getNext()->getNext());
   } else {
@@ -61,3 +61,4 @@ int Node::getCollisions(){
 void Node::zeroCollisions(){
   collisions = 0;
 }
+
