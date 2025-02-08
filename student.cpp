@@ -7,7 +7,7 @@ Student::Student(int newID){
   firstname = (char*)"cheap";
   lastname = (char*)"eggs";
   id = newID;
-  gpa = static_cast<float>(rand() % 300);
+  gpa = static_cast<float>(rand() % 401)/100;
 }
 
 char* Student::getFirstName(){

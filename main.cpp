@@ -17,18 +17,43 @@ bool cmp(char* input, const char* check){
   return false;
 }
 
-void addNode(Node* node, Node** hashTable, int key, int* tblSize){ //add a node to the hash table based on its key
+int keyGen(int id,int tblSize){ //generate a key for a node from its ID                                    
+  return id % tblSize;
+}
+
+void addNode(Node* node, Node** hashTable, int key, int* tblSize){ //add a node to the hash table based on its ke\
+y                                                                                                                 
   if(hashTable[key] == nullptr){
     hashTable[key] = node;
-  }else if (hashTable[key]->getCollisions() > 2){
-    //RESIZE
+  }else if(hashTable[key]->getCollisions() > 2){
+    hashTable = reHash(hashTable,tblSize);
   }else{
     hashTable[key]->append(node);
   }
 }
 
-int keyGen(int id,int tblSize){ //generate a key for a node from its ID                        
-  return id % tblSize;
+Node** reHash(Node** hashTableOld, int* tblSize){
+  cout << "NEW TABLE OF DOUBLE SIZE" << endl;
+  *tblSize *= 2;
+  cout << *tblSize << endl;
+  Node** hashTableNew = new Node* [*tblSize];
+  for(int i = 0; i < *tblSize/2; i++){
+    Node* n1 = hashTableOld[i];
+    int k1 = keyGen(n1->getStudent()->getID(),*tblSize);
+    Node* n2 = n1->getNext();
+    int k2 = keyGen(n2->getStudent()->getID(),*tblSize);
+    Node* n3 = n2->getNext();
+    int k3 = keyGen(n3->getStudent()->getID(),*tblSize);
+    
+    addNode(n1,hashTableNew,k1,tblSize);
+    addNode(n2,hashTableNew,k2,tblSize);
+    addNode(n3,hashTableNew,k3,tblSize);
+    
+    n1->zeroCollisions();
+    n2->zeroCollisions();
+    n3->zeroCollisions();
+  }
+  return hashTableNew;
 }
 
 void deleteNode(int id, int tblSize, Node** hashTable){

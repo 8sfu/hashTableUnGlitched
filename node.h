@@ -22,7 +22,7 @@ class Node{
  private:
   Student* studentValue;
   Node* next;
-  int collisions = 0;
+  int collisions = 1;
 };
 #endif
 

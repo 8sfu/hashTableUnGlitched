@@ -1,3 +1,4 @@
+#include <iomanip>
 #include "node.h"
 
 Node::Node(Student *newStudent) {
@@ -11,7 +12,7 @@ Node::~Node(){
 }
 
 void Node::print(){
-  cout << studentValue->getFirstName() << " " << studentValue->getLastName() << " " << studentValue->getID() << " " << studentValue->getGPA() << " ";
+  cout << studentValue->getFirstName() << " " << studentValue->getLastName() << " " << studentValue->getID() << " " << fixed << setprecision(2) << studentValue->getGPA() << " | ";
   if(this->getNext() == nullptr){
     return;
   }
@@ -55,4 +56,8 @@ Node* Node::getNext() {
 
 int Node::getCollisions(){
   return collisions;
+}
+
+void Node::zeroCollisions(){
+  collisions = 0;
 }
