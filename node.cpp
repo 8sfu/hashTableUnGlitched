@@ -12,7 +12,7 @@ Node::~Node(){
 }
 
 void Node::print(){
-  cout << studentValue->getFirstName() << " " << studentValue->getLastName() << " " << studentValue->getID() << " " << fixed << setprecision(2) << studentValue->getGPA() << " | ";
+  cout << studentValue->getFirstName() << ", " << studentValue->getLastName() << ", " << studentValue->getID() << ", " << fixed << setprecision(2) << studentValue->getGPA() << " | ";
   if(this->getNext() == nullptr){
     return;
   }

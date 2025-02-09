@@ -3,10 +3,10 @@
 
 using namespace std;
 
-Student::Student(int newID){
-  firstname = (char*)"cheap";
-  lastname = (char*)"eggs";
-  id = newID;
+Student::Student(char* setFname, char* setLname, int setID){
+  firstname = setFname;
+  lastname = setLname;
+  id = setID;
   gpa = static_cast<float>(rand() % 401)/100;
 }
 
