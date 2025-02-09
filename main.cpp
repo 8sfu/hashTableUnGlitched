@@ -32,39 +32,19 @@ void printTbl(Node** hashTable, int tblSize){ //print out the chained nodes in e
   }
 }
 
-/*
-Node** reHash(Node** hashTableOld, int* tblSize){
-  cout << "NEW TABLE OF DOUBLE SIZE" << endl;
-  *tblSize *= 2;
-  cout << *tblSize << endl;
-  Node** hashTableNew = new Node* [*tblSize];
-  for(int i = 0; i < *tblSize/2; i++){
-    Node* n1 = hashTableOld[i];
-    int k1 = keyGen(n1->getStudent()->getID(),*tblSize);
-    Node* n2 = n1->getNext();
-    int k2 = keyGen(n2->getStudent()->getID(),*tblSize);
-    Node* n3 = n2->getNext();
-    int k3 = keyGen(n3->getStudent()->getID(),*tblSize);
-    
-    addNode(n1,hashTableNew,k1,tblSize);
-    addNode(n2,hashTableNew,k2,tblSize);
-    addNode(n3,hashTableNew,k3,tblSize);
-    
-    n1->zeroCollisions();
-    n2->zeroCollisions();
-    n3->zeroCollisions();
-  }
-  return hashTableNew;
-  }*/
-
-void addNode(Node* node, Node** hashTable, int key, int* tblSize){ //add a node to the hash table based on its key
+Node** addNode(Node* node, Node** hashTable, int key, int* tblSize){ //add a node to the hash table based on its key
   if(hashTable[key] == nullptr){
     hashTable[key] = node;
-    cout << "SSETTING " << node->getStudent()->getID() << " AT " << key << " @ " << key << endl;
+    //cout << "SSETTING " << node->getStudent()->getID() << " AT " << &hashTable[key] << " @ " << key << endl;
+    return hashTable;
   }else if(hashTable[key]->getCollisions() > 2){
+    printTbl(hashTable,*tblSize);
     *tblSize *= 2;
-    cout << "SETTTING TBLSIZE " << *tblSize << endl;
+    //    cout << "SETTTING TBLSIZE " << *tblSize << endl;
+    cout << endl << "THIS IS THE NEW BIG TABLE" << endl;
     Node** hashTableNew = new Node* [*tblSize]{};
+    printTbl(hashTableNew,*tblSize);
+
     /* cout << endl;
     printTbl(hashTable,*tblSize/2);
     cout << endl;
@@ -73,40 +53,61 @@ void addNode(Node* node, Node** hashTable, int key, int* tblSize){ //add a node 
 
     
     for(int i = 0; i < *tblSize/2; i++){
-      Node* n1 = hashTable[i];
-      Node* n2 = n1->getNext();
-      Node* n3 = n2->getNext();
+      Node* n1 = new Node(hashTable[i]->getStudent());
+      Node* n2 = new Node(hashTable[i]->getNext()->getStudent());
+      Node* n3 = new Node(hashTable[i]->getNext()->getNext()->getStudent());
       
-      n1->setNext(nullptr);
-      n2->setNext(nullptr);
-      n3->setNext(nullptr);
+      cout << endl << "N1 ";
+      n1->print();
+      cout << endl;
+      
+      cout << "N2 ";
+      n2->print();
+      cout << endl;
+
+      cout << "N3 ";
+      n3->print();
+      cout << endl;
+      
+      cout << endl;
       
       int k1 = keyGen(n1->getStudent()->getID(),*tblSize);
       n1->zeroCollisions();
-      addNode(n1,hashTableNew,k1,tblSize);
+      hashTableNew = addNode(n1,hashTableNew,k1,tblSize);
 
       int k2 = keyGen(n2->getStudent()->getID(),*tblSize);
       n2->zeroCollisions();
-      addNode(n2,hashTableNew,k2,tblSize);
+      hashTableNew = addNode(n2,hashTableNew,k2,tblSize);
 
       int k3 = keyGen(n3->getStudent()->getID(),*tblSize);
       n3->zeroCollisions();
-      addNode(n3,hashTableNew,k3,tblSize);
+      hashTableNew = addNode(n3,hashTableNew,k3,tblSize);
+      
+      printTbl(hashTableNew,*tblSize);
     }
     int key = keyGen(node->getStudent()->getID(),*tblSize);
-    addNode(node,hashTableNew,key,tblSize);
+    hashTableNew = addNode(node,hashTableNew,key,tblSize);
     
-    cout << endl;
+
+    cout << endl << "NEW TABLE" << endl;
+    printTbl(hashTableNew,*tblSize);
+    cout << endl << endl;
+    
+    delete[] hashTable;
+    hashTable = new Node*[*tblSize]{};
     hashTable = hashTableNew;
-    printTbl(hashTable,*tblSize);
-    cout << endl;
+    //cout << "OLD TABLE" << endl;
+    //printTbl(hashTable,*tblSize);
+    //cout << endl;
+    return hashTable;
   }else{
     hashTable[key]->append(node);
-    cout << "ESETTING " << node->getStudent()->getID() << " AT " << &hashTable[key] << " @ " << key << endl;
+    return hashTable;
+    //cout << "ESETTING " << node->getStudent()->getID() << " AT " << &hashTable[key] << " @ " << key << endl;
   }
 }
 
-void deleteNode(int id, int tblSize, Node** hashTable){
+Node** deleteNode(int id, int tblSize, Node** hashTable){
   cout << "id " << id << endl;
   int key = keyGen(id,tblSize);
   cout << "key gen " << key << endl;
@@ -115,19 +116,21 @@ void deleteNode(int id, int tblSize, Node** hashTable){
   } else {
     hashTable[key]->depend(id); //else, check its chained nodes
   }
-  return;
+  return hashTable;
 }
   
-void manualAdd(Node* node, Node** hashTable, int* tblSize){ //manually add a node to the table
+Node** manualAdd(Node* node, Node** hashTable, int* tblSize){ //manually add a node to the table
   int key = keyGen(node->getStudent()->getID(),*tblSize);
-  addNode(node,hashTable,key,tblSize);
+  hashTable = addNode(node,hashTable,key,tblSize);
+  return hashTable;
 }
 
-void randomAdd(Node** hashTable, int* tblSize, int* randStart, int genSize){ //randomly generate a block of random students
+Node** randomAdd(Node** hashTable, int* tblSize, int* randStart, int genSize){ //randomly generate a block of random students
   for(int i = *randStart; i < *randStart+genSize; i++){
-    addNode(new Node(new Student(i)),hashTable,i % *tblSize,tblSize);
+    hashTable = addNode(new Node(new Student(i)),hashTable,i % *tblSize,tblSize);
   }
   *randStart += genSize;
+  return hashTable;
 }
 
 int main(){
@@ -153,12 +156,12 @@ int main(){
 	if(randStart <= intput){
 	  randStart = intput+1;
 	}
-	manualAdd(new Node(new Student(intput)),hashTable,&tblSize);
+	hashTable = manualAdd(new Node(new Student(intput)),hashTable,&tblSize);
       }else if(cmp(input,"RAND GEN")){
 	cout << "How many students would you like to add?" << endl;
 	cin >> intput;
 	cin.ignore();
-	randomAdd(hashTable,&tblSize,&randStart,intput);
+	hashTable = randomAdd(hashTable,&tblSize,&randStart,intput);
       }
     }else if(cmp(input,"PRINT")){
       printTbl(hashTable,tblSize);
@@ -166,7 +169,7 @@ int main(){
       cout << "Who would you like to delete?" << endl;
       cin >> intput;
       cin.ignore();
-      deleteNode(intput,tblSize,hashTable);
+      hashTable = deleteNode(intput,tblSize,hashTable);
     }else{
       running = false;
     }

@@ -59,6 +59,6 @@ int Node::getCollisions(){
 }
 
 void Node::zeroCollisions(){
-  collisions = 0;
+  collisions = 1;
 }
 
