@@ -112,6 +112,8 @@ Node** randomAdd(Node** hashTable, int* tblSize, int* randStart, int genSize,cha
 int main(){
   char* input = new char[20];
   char* word = new char[10];
+  char* firstname = new char[10];
+  char* lastname = new char[10];
   bool running = true;
   int tblSize = 3;
   int intput;
@@ -135,8 +137,6 @@ int main(){
     l >> word;
     strcpy(list[i],word);
   }
-
-  cout << fist[rand() % 25] << " " << list[rand() % 25] << endl;
   
   while(running){ //take inputs and call appropriate functions
     cout << endl << "Available commands - ADD,PRINT,DELETE,QUIT" << endl;
@@ -151,15 +151,11 @@ int main(){
 	if(randStart <= intput){ //increment the random gen student block above the last manually added student
 	  randStart = intput+1;
 	}
-	char* firstname = new char[10]; //Take inputs for the id, first, last name
 	cout << "First name?" << endl;
-	cin.getline(firstname,10);
-	char* lastname = new char[10];
+	cin.getline(firstname,9);
 	cout << "Last name?" << endl;
-	cin.getline(lastname,10);
+	cin.getline(lastname,9);
 	hashTable = manualAdd(new Node(new Student(firstname,lastname,intput)),hashTable,&tblSize);
-	delete[] firstname;
-	delete[] lastname;
       }else if(cmp(input,"RAND GEN")){
 	cout << "How many students would you like to add?" << endl;
 	cin >> intput;
@@ -182,5 +178,7 @@ int main(){
   l.close();
   cout << endl;
   delete[] input;
+  delete[] firstname;
+  delete[] lastname;
   return 0;
 }
